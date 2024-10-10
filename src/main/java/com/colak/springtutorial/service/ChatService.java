@@ -24,7 +24,7 @@ import java.util.List;
 public class ChatService {
 
 
-    private final ChatClient aiClient;
+    private final ChatClient chatClient;
 
     public List<Place> searchPlaces(String prompt) {
 
@@ -38,7 +38,7 @@ public class ChatService {
 
         Prompt chatPrompt = new Prompt(List.of(SYSTEM_MESSAGE, new UserMessage(prompt)));
 
-        ChatResponse chatResponse = aiClient.call(chatPrompt);
+        ChatResponse chatResponse = call(chatPrompt);
 
         Generation responseResult = chatResponse.getResult();
         AssistantMessage assistantMessage = responseResult.getOutput();
@@ -59,10 +59,14 @@ public class ChatService {
         UserMessage userMessage = new UserMessage(userMessageText, mediaList);
 
         Prompt prompt = new Prompt(userMessage);
-        ChatResponse chatResponse = aiClient.call(prompt);
+        ChatResponse chatResponse = call(prompt);
         Generation responseResult = chatResponse.getResult();
         AssistantMessage assistantMessage = responseResult.getOutput();
         return assistantMessage.getContent();
+    }
+
+    private ChatResponse call(Prompt prompt) {
+        return chatClient.prompt(prompt).call().chatResponse();
     }
 
 }
